@@ -8,71 +8,56 @@ const cartFile = "cart.json";
 const pricer = (input) =>
   (input / 100).toLocaleString("en-US", { style: "currency", currency: "USD" });
 
-// Read and write functions
-function readInventory() {
+const readFile = (file) => {
   try {
-    const data = fs.readFileSync(inventoryFile, "utf8");
+    const data = fs.readFileSync(file, "utf8");
     return JSON.parse(data);
   } catch (err) {
-    console.error("Error reading inventory file:", err);
+    console.error(`Error reading ${file}:`, err);
     return [];
   }
-}
+};
 
-function saveInventory(data) {
+const writeFile = (file, data) => {
   try {
-    fs.writeFileSync(inventoryFile, JSON.stringify(data, null, 2));
-    console.log("Inventory saved successfully.");
+    fs.writeFileSync(file, JSON.stringify(data, null, 2));
+    console.log(`${file} saved successfully.`);
   } catch (err) {
-    console.error("Error saving inventory file:", err);
+    console.error(`Error saving ${file}:`, err);
   }
-}
+};
 
-function readCart() {
-  try {
-    const data = fs.readFileSync(cartFile, "utf8");
-    return JSON.parse(data);
-  } catch (err) {
-    console.error("Error reading cart file:", err);
-    return [];
-  }
-}
-
-function saveCart(data) {
-  try {
-    fs.writeFileSync(cartFile, JSON.stringify(data, null, 2));
-    console.log("Cart saved successfully.");
-  } catch (err) {
-    console.error("Error saving cart file:", err);
-  }
-}
+const readInventory = () => readFile(inventoryFile);
+const saveInventory = (data) => writeFile(inventoryFile, data);
+const readCart = () => readFile(cartFile);
+const saveCart = (data) => writeFile(cartFile, data);
 
 // Inventory modifiers
-function add(name, priceInCents, inStock, category) {
+const add = (name, priceInCents, inStock, category) => {
   const inventory = readInventory();
   const newItem = {
     id: nanoid(),
     name,
-    priceInCents: parseInt(priceInCents),
+    priceInCents: parseInt(priceInCents, 10),
     inStock: inStock === "true",
     category,
   };
   inventory.push(newItem);
   saveInventory(inventory);
-}
+};
 
-function list() {
+const list = () => {
   const inventory = readInventory();
   inventory.forEach((item) => {
     console.log(
-      `${item.name} -- Category: ${item.category} -- Price:${pricer(
+      `${item.name} -- Category: ${item.category} -- Price: ${pricer(
         item.priceInCents
       )} -- ${item.inStock ? "In stock" : "Not in stock"} -- id: ${item.id}`
     );
   });
-}
+};
 
-function view(id) {
+const view = (id) => {
   const inventory = readInventory();
   const item = inventory.find((item) => item.id === id);
   if (item) {
@@ -83,23 +68,23 @@ function view(id) {
   } else {
     console.log("Item not found.");
   }
-}
+};
 
-function update(id, name, priceInCents, inStock, category) {
+const update = (id, name, priceInCents, inStock, category) => {
   const inventory = readInventory();
   const item = inventory.find((item) => item.id === id);
   if (item) {
     item.name = name;
-    item.priceInCents = parseInt(priceInCents);
+    item.priceInCents = parseInt(priceInCents, 10);
     item.inStock = inStock === "true";
     item.category = category;
     saveInventory(inventory);
   } else {
     console.log("Item not found.");
   }
-}
+};
 
-function remove(id) {
+const remove = (id) => {
   const inventory = readInventory();
   const result = inventory.filter((item) => item.id !== id);
   if (result.length < inventory.length) {
@@ -107,10 +92,10 @@ function remove(id) {
   } else {
     console.log("Item not found.");
   }
-}
+};
 
 // Cart functions
-function addToCart(id, quantity) {
+const addToCart = (id, quantity) => {
   const inventory = readInventory();
   const item = inventory.find((item) => item.id === id);
   if (!item) {
@@ -122,18 +107,18 @@ function addToCart(id, quantity) {
   const cartItem = cart.find((item) => item.id === id);
 
   if (cartItem) {
-    cartItem.quantity += parseInt(quantity);
+    cartItem.quantity += parseInt(quantity, 10);
   } else {
     cart.push({
       ...item,
-      quantity: parseInt(quantity),
+      quantity: parseInt(quantity, 10),
     });
   }
 
   saveCart(cart);
-}
+};
 
-function viewCart() {
+const viewCart = () => {
   const cart = readCart();
   if (cart.length === 0) {
     console.log("Cart is empty.");
@@ -151,16 +136,16 @@ function viewCart() {
     );
   });
   console.log(`Total: ${pricer(total)}`);
-}
+};
 
-function cancelCart() {
+const cancelCart = () => {
   saveCart([]);
   console.log("Cart has been emptied.");
-}
+};
 
 const args = process.argv.slice(2);
 
-switch (process.argv[2]) {
+switch (args[0]) {
   case "add":
     add(args[1], args[2], args[3], args[4]);
     break;
