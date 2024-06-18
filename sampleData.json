@@ -1,0 +1,23 @@
+[
+  {
+    "id": "1",
+    "name": "Apple",
+    "priceInCents": 100,
+    "inStock": true,
+    "category": "Fruit"
+  },
+  {
+    "id": "2",
+    "name": "Lettuce",
+    "priceInCents": 150,
+    "inStock": true,
+    "category": "Vegetable"
+  },
+  {
+    "id": "3",
+    "name": "Cereal",
+    "priceInCents": 300,
+    "inStock": false,
+    "category": "Grocery"
+  }
+]

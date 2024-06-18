@@ -1,0 +1,24 @@
+{
+  "name": "crud-inventory-project",
+  "version": "1.0.0",
+  "description": "Simple inventory management project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "add": "node index.js add",
+    "list": "node index.js list",
+    "view": "node index.js view",
+    "update": "node index.js update",
+    "remove": "node index.js remove",
+    "addToCart": "node index.js addToCart",
+    "viewCart": "node index.js viewCart",
+    "cancelCart": "node index.js cancelCart",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Abdel Sayedahmed",
+  "license": "ISC",
+  "dependencies": {
+    "nanoid": "^3.3.7"
+  }
+}
