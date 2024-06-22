@@ -1,11 +1,14 @@
 const fs = require("fs");
 const { nanoid } = require("nanoid");
+const chalk = require("chalk");
+const readline = require("readline");
 
 const inventoryFile = "inventory.json";
 const cartFile = "cart.json";
 
 // Helpers
-const pricer = (input) => (input / 100).toLocaleString("en-US", { style: "currency", currency: "USD" });
+const pricer = (input) =>
+  (input / 100).toLocaleString("en-US", { style: "currency", currency: "USD" });
 
 const readFile = (file) => {
   try {
@@ -49,9 +52,12 @@ const list = () => {
   const inventory = readInventory();
   inventory.forEach((item) => {
     console.log(
-      `${item.name} -- Category: ${item.category} -- Price: ${pricer(
-        item.priceInCents
-      )} -- ${item.inStock ? "In stock" : "Not in stock"} -- id: ${item.id}`
+      chalk.blue(`${item.name}`) +
+        ` -- Category: ${chalk.green(item.category)} -- Price: ${chalk.yellow(
+          pricer(item.priceInCents)
+        )} -- ${
+          item.inStock ? chalk.green("In stock") : chalk.red("Not in stock")
+        } -- id: ${chalk.cyan(item.id)}`
     );
   });
 };
@@ -60,12 +66,12 @@ const view = (id) => {
   const inventory = readInventory();
   const item = inventory.find((item) => item.id === id);
   if (item) {
-    console.log(`Name: ${item.name}`);
-    console.log(`Price: ${pricer(item.priceInCents)}`);
-    console.log(`In stock: ${item.inStock}`);
-    console.log(`Category: ${item.category}`);
+    console.log(chalk.blue(`Name: ${item.name}`));
+    console.log(chalk.yellow(`Price: ${pricer(item.priceInCents)}`));
+    console.log(chalk.green(`In stock: ${item.inStock}`));
+    console.log(chalk.green(`Category: ${item.category}`));
   } else {
-    console.log("Item not found.");
+    console.log(chalk.red("Item not found."));
   }
 };
 
@@ -79,7 +85,7 @@ const update = (id, name, priceInCents, inStock, category) => {
     item.category = category;
     saveInventory(inventory);
   } else {
-    console.log("Item not found.");
+    console.log(chalk.red("Item not found."));
   }
 };
 
@@ -89,22 +95,24 @@ const remove = (id) => {
   if (result.length < inventory.length) {
     saveInventory(result);
   } else {
-    console.log("Item not found.");
+    console.log(chalk.red("Item not found."));
   }
 };
 
 // Cart functions
 const addToCart = (name, quantity) => {
   const inventory = readInventory();
-  const item = inventory.find((item) => item.name.toLowerCase() === name.toLowerCase());
+  const item = inventory.find(
+    (item) => item.name.toLowerCase() === name.toLowerCase()
+  );
 
   if (!item) {
-    console.log("Item not found.");
+    console.log(chalk.red("Item not found."));
     return;
   }
 
   const cart = readCart();
-  const cartItem = cart.find((item) => item.id === item.id);
+  const cartItem = cart.find((cartItem) => cartItem.id === item.id);
 
   if (cartItem) {
     cartItem.quantity += parseInt(quantity, 10);
@@ -121,7 +129,7 @@ const addToCart = (name, quantity) => {
 const viewCart = () => {
   const cart = readCart();
   if (cart.length === 0) {
-    console.log("Cart is empty.");
+    console.log(chalk.blue("Cart is empty."));
     return;
   }
 
@@ -130,48 +138,134 @@ const viewCart = () => {
     const itemTotal = item.priceInCents * item.quantity;
     total += itemTotal;
     console.log(
-      `${item.name} -- ${item.quantity} x ${pricer(
-        item.priceInCents
-      )} = ${pricer(itemTotal)}`
+      chalk.blue(`${item.name}`) +
+        ` -- ${chalk.green(item.quantity)} x ${chalk.yellow(
+          pricer(item.priceInCents)
+        )} = ${chalk.yellow(pricer(itemTotal))}`
     );
   });
-  console.log(`Total: ${pricer(total)}`);
+  console.log(chalk.blue(`Total: ${pricer(total)}`));
 };
 
 const cancelCart = () => {
   saveCart([]);
-  console.log("Cart has been emptied.");
+  console.log(chalk.green("Cart has been emptied."));
 };
 
-const args = process.argv.slice(2);
+const filter = (property, value) => {
+  const inventory = readInventory();
+  let filteredItems;
 
-switch (args[0]) {
-  case "add":
-    add(args[1], args[2], args[3], args[4]);
-    break;
-  case "list":
-    list();
-    break;
-  case "view":
-    view(args[1]);
-    break;
-  case "update":
-    update(args[1], args[2], args[3], args[4], args[5]);
-    break;
-  case "remove":
-    remove(args[1]);
-    break;
-  case "addToCart":
-    addToCart(args[1], args[2]);
-    break;
-  case "viewCart":
-    viewCart();
-    break;
-  case "cancelCart":
-    cancelCart();
-    break;
-  default:
-    console.log(
-      "Invalid command. Use node index.js add, list, view, update, remove, addToCart, viewCart, or cancelCart along with arguments..."
-    );
-}
+  switch (property) {
+    case "inStock":
+      const inStock = value === "true";
+      filteredItems = inventory.filter((item) => item.inStock === inStock);
+      break;
+    case "priceGreaterThan":
+      const minPrice = parseInt(value, 10);
+      filteredItems = inventory.filter((item) => item.priceInCents > minPrice);
+      break;
+    case "priceLessThan":
+      const maxPrice = parseInt(value, 10);
+      filteredItems = inventory.filter((item) => item.priceInCents < maxPrice);
+      break;
+    default:
+      filteredItems = [];
+      break;
+  }
+
+  if (filteredItems.length > 0) {
+    filteredItems.forEach((item) => {
+      console.log(
+        chalk.blue(`${item.name}`) +
+          ` -- Category: ${chalk.green(item.category)} -- Price: ${chalk.yellow(
+            pricer(item.priceInCents)
+          )} -- ${
+            item.inStock ? chalk.green("In stock") : chalk.red("Not in stock")
+          } -- id: ${chalk.cyan(item.id)}`
+      );
+    });
+  } else {
+    console.log(chalk.red("No items match your criteria."));
+  }
+};
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const interactiveMenu = () => {
+  rl.question(
+    "Choose an action (add, list, view, update, remove, addToCart, viewCart, cancelCart, filter): ",
+    (action) => {
+      switch (action) {
+        case "add":
+          rl.question(
+            "Enter name, priceInCents, inStock, category: ",
+            (input) => {
+              const [name, priceInCents, inStock, category] = input.split(", ");
+              add(name, priceInCents, inStock, category);
+              rl.close();
+            }
+          );
+          break;
+        case "list":
+          list();
+          rl.close();
+          break;
+        case "view":
+          rl.question("Enter item id: ", (id) => {
+            view(id);
+            rl.close();
+          });
+          break;
+        case "update":
+          rl.question(
+            "Enter id, name, priceInCents, inStock, category: ",
+            (input) => {
+              const [id, name, priceInCents, inStock, category] =
+                input.split(", ");
+              update(id, name, priceInCents, inStock, category);
+              rl.close();
+            }
+          );
+          break;
+        case "remove":
+          rl.question("Enter item id: ", (id) => {
+            remove(id);
+            rl.close();
+          });
+          break;
+        case "addToCart":
+          rl.question("Enter name, quantity: ", (input) => {
+            const [name, quantity] = input.split(", ");
+            addToCart(name, quantity);
+            rl.close();
+          });
+          break;
+        case "viewCart":
+          viewCart();
+          rl.close();
+          break;
+        case "cancelCart":
+          cancelCart();
+          rl.close();
+          break;
+        case "filter":
+          rl.question("Enter property and value: ", (input) => {
+            const [property, value] = input.split(", ");
+            filter(property, value);
+            rl.close();
+          });
+          break;
+        default:
+          console.log(chalk.red("Invalid action."));
+          rl.close();
+          break;
+      }
+    }
+  );
+};
+
+interactiveMenu();
