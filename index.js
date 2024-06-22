@@ -37,6 +37,17 @@ const saveCart = (data) => writeFile(cartFile, data);
 // Inventory modifiers
 const add = (name, priceInCents, inStock, category) => {
   const inventory = readInventory();
+  const itemExists = inventory.some(
+    (item) => item.name.toLowerCase() === name.toLowerCase()
+  );
+
+  if (itemExists) {
+    console.log(
+      chalk.red(`Item with name "${name}" already exists in the inventory.`)
+    );
+    return;
+  }
+
   const newItem = {
     id: nanoid(),
     name,
@@ -269,3 +280,15 @@ const interactiveMenu = () => {
 };
 
 interactiveMenu();
+
+module.exports = {
+  add,
+  list,
+  view,
+  update,
+  remove,
+  addToCart,
+  viewCart,
+  cancelCart,
+  filter,
+};

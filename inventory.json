@@ -14,15 +14,9 @@
     "category": "fruit"
   },
   {
-    "id": "R1zykpUj2OkH072ZUJXCJ",
-    "name": "orange",
-    "priceInCents": null,
-    "inStock": false
-  },
-  {
-    "id": "X1MJOT5fp_RXFPrNkuWa5",
-    "name": "orange",
-    "priceInCents": 4000,
+    "id": "i7srZMsj8e2BQjQvhxtop",
+    "name": "grape",
+    "priceInCents": 2000,
     "inStock": true,
     "category": "fruit"
   }
