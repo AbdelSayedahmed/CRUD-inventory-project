@@ -5,8 +5,7 @@ const inventoryFile = "inventory.json";
 const cartFile = "cart.json";
 
 // Helpers
-const pricer = (input) =>
-  (input / 100).toLocaleString("en-US", { style: "currency", currency: "USD" });
+const pricer = (input) => (input / 100).toLocaleString("en-US", { style: "currency", currency: "USD" });
 
 const readFile = (file) => {
   try {
@@ -95,16 +94,17 @@ const remove = (id) => {
 };
 
 // Cart functions
-const addToCart = (id, quantity) => {
+const addToCart = (name, quantity) => {
   const inventory = readInventory();
-  const item = inventory.find((item) => item.id === id);
+  const item = inventory.find((item) => item.name.toLowerCase() === name.toLowerCase());
+
   if (!item) {
     console.log("Item not found.");
     return;
   }
 
   const cart = readCart();
-  const cartItem = cart.find((item) => item.id === id);
+  const cartItem = cart.find((item) => item.id === item.id);
 
   if (cartItem) {
     cartItem.quantity += parseInt(quantity, 10);
