@@ -204,7 +204,7 @@ const interactiveMenu = () => {
           rl.question(
             "Enter name, priceInCents, inStock, category: ",
             (input) => {
-              const [name, priceInCents, inStock, category] = input.split(", ");
+              const [name, priceInCents, inStock, category] = input.split(" ");
               add(name, priceInCents, inStock, category);
               rl.close();
             }
@@ -225,7 +225,7 @@ const interactiveMenu = () => {
             "Enter id, name, priceInCents, inStock, category: ",
             (input) => {
               const [id, name, priceInCents, inStock, category] =
-                input.split(", ");
+                input.split(" ");
               update(id, name, priceInCents, inStock, category);
               rl.close();
             }
@@ -239,7 +239,7 @@ const interactiveMenu = () => {
           break;
         case "addToCart":
           rl.question("Enter name, quantity: ", (input) => {
-            const [name, quantity] = input.split(", ");
+            const [name, quantity] = input.split(" ");
             addToCart(name, quantity);
             rl.close();
           });
@@ -254,7 +254,7 @@ const interactiveMenu = () => {
           break;
         case "filter":
           rl.question("Enter property and value: ", (input) => {
-            const [property, value] = input.split(", ");
+            const [property, value] = input.split(" ");
             filter(property, value);
             rl.close();
           });

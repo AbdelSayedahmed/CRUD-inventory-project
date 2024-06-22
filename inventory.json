@@ -5,5 +5,25 @@
     "priceInCents": 600,
     "inStock": false,
     "category": "fruit"
+  },
+  {
+    "id": "Q6kiMVY9cojQSQU7cG0lo",
+    "name": "Banana",
+    "priceInCents": 3000,
+    "inStock": true,
+    "category": "fruit"
+  },
+  {
+    "id": "R1zykpUj2OkH072ZUJXCJ",
+    "name": "orange",
+    "priceInCents": null,
+    "inStock": false
+  },
+  {
+    "id": "X1MJOT5fp_RXFPrNkuWa5",
+    "name": "orange",
+    "priceInCents": 4000,
+    "inStock": true,
+    "category": "fruit"
   }
 ]
