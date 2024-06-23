@@ -6,9 +6,7 @@ const readline = require("readline");
 const inventoryFile = "inventory.json";
 const cartFile = "cart.json";
 
-// Helpers
-const pricer = (input) =>
-  (input / 100).toLocaleString("en-US", { style: "currency", currency: "USD" });
+const pricer = (input) => (input / 100).toLocaleString("en-US", { style: "currency", currency: "USD" });
 
 const readFile = (file) => {
   try {
@@ -34,7 +32,6 @@ const saveInventory = (data) => writeFile(inventoryFile, data);
 const readCart = () => readFile(cartFile);
 const saveCart = (data) => writeFile(cartFile, data);
 
-// Inventory modifiers
 const add = (name, priceInCents, inStock, category) => {
   const inventory = readInventory();
   const itemExists = inventory.some(
